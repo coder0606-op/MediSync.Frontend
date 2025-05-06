@@ -78,23 +78,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Map Integration with SIT Marker */}
-      <div className="mb-20">
-        <div className="bg-white p-4 rounded-2xl shadow-lg">
-          <div className="text-gray-700 mb-4">
-            <MapPin className="inline-block w-5 h-5 text-blue-600 mr-2" />
-            <span className="font-medium">Symbiosis Institute of Technology - MEDISYNC Center</span>
-          </div>
-          <iframe
-  class="w-full h-[450px] rounded-lg border-0"
-  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.255900857557!2d73.726903!3d18.5401013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67bf7e47%3A0x50efd384303f6cbb!2sSymbiosis%20Institute%20of%20Technology%20-%20SIT%20Pune!5e0!3m2!1sen!2sin!4v1699297183685!5m2!1sen!2sin"
-  allowfullscreen
-  loading="lazy"
-  referrerpolicy="no-referrer-when-downgrade"
-></iframe>
-
-        </div>
-      </div>
+     
 
       {/* Getting Here Section */}
       <div className="bg-white rounded-2xl p-8 shadow-lg mb-20">
