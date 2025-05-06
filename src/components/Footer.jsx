@@ -74,18 +74,18 @@ const Footer = () => {
                   </span>
                   <div>
                     <p className="font-medium">Call Us</p>
-                    <p>+91 98765 43210</p>
+                    <p>+91 00000 00000</p>
                   </div>
                 </a>
               </li>
               <li>
-                <a href="mailto:info@medisync.in" className="group flex items-center text-gray-600 hover:text-blue-600 transition-colors">
+                <a href="mailto:ayush@medisync.in" className="group flex items-center text-gray-600 hover:text-blue-600 transition-colors">
                   <span className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-blue-50 mr-3">
                     <Mail size={16} className="group-hover:text-blue-600" />
                   </span>
                   <div>
                     <p className="font-medium">Email Us</p>
-                    <p>info@medisync.in</p>
+                    <p>ayush@medisync.in</p>
                   </div>
                 </a>
               </li>
@@ -96,7 +96,7 @@ const Footer = () => {
                   </span>
                   <div>
                     <p className="font-medium">Location</p>
-                    <p>Pune, Maharashtra</p>
+                    <p>Bhopal, Madhya Pradesh</p>
                   </div>
                 </div>
               </li>
