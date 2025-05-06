@@ -40,12 +40,10 @@ const MyAppointments = () => {
 
       if (data.success) {
         setAppointments(data.appointments.reverse());
-        console.log(data.appointments);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
@@ -65,7 +63,6 @@ const MyAppointments = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
@@ -76,9 +73,83 @@ const MyAppointments = () => {
     }
   }, [token]);
 
-  // Handle the payment navigation
-  const handlePayment = (appointment) => {
-    navigate("/payment", { state: { appointment } });
+  // Handle Razorpay payment
+  const handlePayment = async (appointment) => {
+    try {
+      // Step 1: Call the backend to create the order
+      const { data } = await axios.post(
+        `${backendUrl}/api/create-order`,
+        { amount: appointment.amount },
+        { headers: { token } }
+      );
+
+      if (data.success) {
+        const { id: orderId } = data.order;
+
+        // Step 2: Initialize Razorpay
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Your Razorpay Key ID
+          amount: appointment.amount * 100, // Amount in paise
+          currency: "INR",
+          name: "Doctor Appointment",
+          description: `Payment for ${appointment.docData.name}`,
+          order_id: orderId,
+          handler: async function (response) {
+            try {
+              const {
+                razorpay_payment_id: paymentId,
+                razorpay_order_id: orderId,
+                razorpay_signature: signature,
+              } = response;
+
+              const paymentData = {
+                paymentId,
+                orderId,
+                signature,
+                appointmentId: appointment._id,
+              };
+
+              const verifyResponse = await axios.post(
+                `${backendUrl}/api/verify-payment`,
+                paymentData,
+                { headers: { token } }
+              );
+
+              if (verifyResponse.data.success) {
+                // Update the appointment to show "Paid"
+                const updatedAppointments = appointments.map((appt) =>
+                  appt._id === appointment._id ? { ...appt, payment: true } : appt
+                );
+                setAppointments(updatedAppointments);
+                toast.success("Payment successful!");
+                getUserAppointments();
+                getDoctorsData();
+              } else {
+                toast.error(verifyResponse.data.message);
+              }
+            } catch (error) {
+              toast.error("Payment verification failed");
+            }
+          },
+          prefill: {
+            name: "Patient Name", // Get patient's name dynamically if needed
+            email: "patient@example.com", // Patient's email
+          },
+          theme: {
+            color: "#F37254",
+          },
+        };
+
+        // Step 4: Open the Razorpay modal
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } else {
+        toast.error("Error creating Razorpay order");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Payment failed");
+    }
   };
 
   return (
@@ -107,7 +178,7 @@ const MyAppointments = () => {
             </div>
             <div></div>
             <div className="flex flex-col justify-end">
-              {!item.cancelled && (
+              {!item.cancelled && !item.payment && (
                 <button
                   onClick={() => handlePayment(item)}
                   className="text-xs text-stone-500 sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300"
@@ -115,7 +186,12 @@ const MyAppointments = () => {
                   Pay Online
                 </button>
               )}
-              {!item.cancelled && (
+              {item.payment && (
+                <button className="sm:min-w-48 py-2 px-4 border border-green-500 rounded-lg text-green-500 font-semibold bg-green-100 hover:bg-green-500 hover:text-white transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500">
+                Paid
+              </button>
+              )}
+              {!item.cancelled && !item.payment && (
                 <button
                   onClick={() => cancelAppointment(item._id)}
                   className="text-xs text-stone-500 sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
