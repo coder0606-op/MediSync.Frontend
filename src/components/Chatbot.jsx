@@ -65,7 +65,7 @@ const HealthcareBot = () => {
         messages: formattedMessages
       });
 
-      setMessages(prev => [...prev, { type: 'bot', content: response?.response || 'No response.' }]);
+      setMessages(prev => [...prev, { type: 'bot', content: response?.answer || 'No response.' }]);
     } catch (error) {
       console.error(error);
       setMessages(prev => [...prev, { type: 'error', content: 'Error sending message. Please try again.' }]);
